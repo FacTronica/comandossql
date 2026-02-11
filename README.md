@@ -78,7 +78,7 @@ DATABASES=$(mysql -u"$USER" -p"$PASS" -h"$HOST" -e "SHOW DATABASES;" | grep -Ev 
 # ===============================
 for DB in $DATABASES; do
     echo "Respaldando base de datos: $DB"
-    mysqldump -u"$USER" -p"$PASS" -h"$HOST" "$DB" > "$BACKUP_DIR/${DB}_${FECHA}.sql"
+    mysqldump -u"$USER" -p"$PASS" -h"$HOST" "$DB" > "$BACKUP_DIR/${DB}.sql"
 done
 
 echo "Respaldo completo finalizado"

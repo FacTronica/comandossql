@@ -48,7 +48,7 @@ mysql --host=localhost --user=usuariobd --password=clavebd -e "create database b
 mysql --host=localhost --user=usuariobd --password=clavebd -e "truncate table basedatos.tbl_tabla";
 ````
 
-### SCRIPT PARA RESPALDAR TODAS LAS BASES DE DATOS ARCHIVOS POR BD
+## RESPALDAR TODAS LAS BASES DE DATOS
 ````
 #!/bin/bash
 
@@ -82,4 +82,60 @@ for DB in $DATABASES; do
 done
 
 echo "Respaldo completo finalizado"
+````
+
+## RESTAURAR TODAS LAS BASES DE DATOS 
+
+````
+#!/bin/bash
+
+# ===============================
+# CONFIGURACIÓN
+# ===============================
+USER="--usuario---"
+PASS="---clave---"
+HOST="localhost"
+
+# Carpeta donde están los respaldos
+BACKUP_DIR="/home/admin/backup"
+
+# ===============================
+# VALIDACIONES
+# ===============================
+if [ ! -d "$BACKUP_DIR" ]; then
+    echo "El directorio de backup no existe: $BACKUP_DIR"
+    exit 1
+fi
+
+# ===============================
+# PROCESO DE RESTAURACIÓN
+# ===============================
+for FILE in "$BACKUP_DIR"/*.sql; do
+
+    # Validar que existan archivos .sql
+    [ -e "$FILE" ] || continue
+
+    # Obtener nombre de la base de datos (sin .sql)
+    DB_NAME=$(basename "$FILE" .sql)
+
+    echo "--------------------------------------"
+    echo "Restaurando base de datos: $DB_NAME"
+    echo "Archivo: $FILE"
+
+    # Crear base de datos si no existe
+    mysql -u"$USER" -p"$PASS" -h"$HOST" -e "CREATE DATABASE IF NOT EXISTS \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+
+    # Importar SQL
+    mysql -u"$USER" -p"$PASS" -h"$HOST" "$DB_NAME" < "$FILE"
+
+    if [ $? -eq 0 ]; then
+        echo "Restauración exitosa: $DB_NAME"
+    else
+        echo "Error restaurando: $DB_NAME"
+    fi
+
+done
+
+echo "======================================"
+echo "Proceso de restauración finalizado"
 ````

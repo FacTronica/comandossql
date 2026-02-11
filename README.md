@@ -47,4 +47,39 @@ mysql -u $USUARIO -p$CLAVE $BD < $ARCHIVO.sql;
 mysql --host=localhost --user=usuariobd --password=clavebd -e "create database basedatos";
 mysql --host=localhost --user=usuariobd --password=clavebd -e "truncate table basedatos.tbl_tabla";
 ````
- 
+
+### SCRIPT PARA RESPALDAR TODAS LAS BASES DE DATOS ARCHIVOS POR BD
+````
+#!/bin/bash
+
+# ===============================
+# CONFIGURACIÓN
+# ===============================
+USER="--usuario---"
+PASS="---clave---"
+HOST="localhost"
+
+# Carpeta donde se guardarán los respaldos
+BACKUP_DIR="/home/admin/backup"
+
+# Fecha para los archivos
+FECHA=$(date +"%Y-%m-%d_%H-%M")
+
+# Crear carpeta si no existe
+mkdir -p "$BACKUP_DIR"
+
+# ===============================
+# OBTENER LISTA DE BASES DE DATOS
+# ===============================
+DATABASES=$(mysql -u"$USER" -p"$PASS" -h"$HOST" -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
+
+# ===============================
+# RESPALDO INDIVIDUAL
+# ===============================
+for DB in $DATABASES; do
+    echo "Respaldando base de datos: $DB"
+    mysqldump -u"$USER" -p"$PASS" -h"$HOST" "$DB" > "$BACKUP_DIR/${DB}_${FECHA}.sql"
+done
+
+echo "Respaldo completo finalizado"
+````

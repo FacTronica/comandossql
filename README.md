@@ -9,6 +9,10 @@ GRANT ALL PRIVILEGES ON *.* to 'usuario'@'localhost';
 FLUSH PRIVILEGES;
 quit;
 ````
+## PERMISOS PARA TABLA ESPECIFICA
+````
+GRANT SELECT , INSERT , UPDATE , REFERENCES ON basedatos.tabla TO 'usuario'@'localhost';
+````
 
 ## EXPORTAR BASE DE DATOS COMPLETA:
 ````
